@@ -1,0 +1,181 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "bp_sample glue job template - /cf/bp_sample_job.json",
+  "Parameters": {
+    "GlueJobName": {
+      "Type": "String",
+      "Default": "sample",
+      "Description": "ToDo: Name of the Glue job"
+    },
+    "GlueJobDescription": {
+      "Type": "String",
+      "Default": "Sample Glue Job ",
+      "Description": "ToDo: Description of the Glue job"
+    },
+    "GlueJobScriptRelativePath": {
+      "Type": "String",
+      "Default": "ingestion/etl/src/bp_sample_glue.py",
+      "Description": "ToDo: Name of the Glue script source file"
+    },
+    "ExtraPythonFileNamePath": {
+      "Type": "String",
+      "Default": "ingestion/etl/src/bp_sample_glue.zip",
+      "Description": "ToDo: Name of the zip file containing extra python files to be used in glue job"
+    },
+    "PythonLibraryPath": {
+      "Type": "String",
+      "Default": "ingestion/etl/src/bp_sample_glue_lib.zip",
+      "Description": "ToDo: Name of the zip file containing external python libraries to be used in glue job"
+    },
+    "ProjectName": {
+      "Type": "String",
+      "Description": "The project name. It is passed by parent stack",
+      "Default": ""
+    },
+    "BuildBucket": {
+      "Type": "String",
+      "Description": "Source code build bucket. It is passed by parent stack",
+      "Default": ""
+    },
+    "BuildFolder": {
+      "Type": "String",
+      "Default": "",
+      "Description": "Current build for source code, ==$BUILD_TAG. It is passed by parent stack"
+    },
+    "Stage": {
+      "Type": "String",
+      "Default": "",
+      "Description": "the stage e.g. prod, qa, dev, {developer}. It is passed by parent stack"
+    },
+    "GlueRoleARN": {
+      "Type": "String",
+      "Default": "",
+      "Description": "The glue role ARN. It is passed by parent stack"
+    }
+  },
+  "Resources": {
+    "BpSample": {
+      "Type": "AWS::Glue::Job",
+      "Properties": {
+        "Description": {
+          "Ref": "GlueJobDescription"
+        },
+        "Command": {
+          "Name": "glueetl",
+          "PythonVersion":3,
+          "ScriptLocation": {
+            "Fn::Join": [
+              "/",
+              [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "s3://",
+                      {
+                        "Ref": "BuildBucket"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Ref": "BuildFolder"
+                },
+                {
+                  "Ref": "GlueJobScriptRelativePath"
+                }
+              ]
+            ]
+          }
+        },
+        "DefaultArguments": {
+          "--extra-py-files": {
+            "Fn::Join":[",",[{
+              "Fn::Join": ["/",[
+                  "s3:/",
+                  {
+                    "Ref": "BuildBucket"
+                  },
+                  {
+                    "Ref": "BuildFolder"
+                  },
+                  {
+                    "Ref": "ExtraPythonFileNamePath"
+                  }
+                ]
+              ]
+            },
+            {
+              "Fn::Join": ["/",[
+                  "s3:/",
+                  {
+                    "Ref": "BuildBucket"
+                  },
+                  {
+                    "Ref": "BuildFolder"
+                  },
+                  {
+                    "Ref": "PythonLibraryPath"
+                  }
+                ]
+              ]
+            }]]
+          },
+          "--enable-metrics": "",
+          "--enable-continuous-cloudwatch-log":true,
+          "--enable-continuous-log-filter":true,
+          "--enable-spark-ui":true,
+          "--spark-event-logs-path": {"Fn::Join": [
+              "/",
+              [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "s3://",
+                      {
+                        "Ref": "BuildBucket"
+                      }
+                    ]
+                  ]
+                },
+                "sparkui-logs"
+              ]
+            ]
+          },
+          "--stage": {
+            "Ref": "Stage"
+          },
+          "--project": {
+            "Ref": "ProjectName"
+          }
+        },
+        "AllocatedCapacity": 2,
+        "ExecutionProperty": {
+          "MaxConcurrentRuns": 3
+        },
+        "MaxRetries": 0,
+        "GlueVersion":1.0,
+        "Name": {
+              "Fn::Join": [
+                "-",
+                [
+                  {
+                    "Ref": "ProjectName"
+                  },
+                  {
+                    "Ref": "GlueJobName"
+                  },
+                  {
+                    "Ref": "Stage"
+                  }
+                ]
+              ]
+            },
+        "Role": {"Ref":"GlueRoleARN"}
+      }
+    }
+  }
+}
+
+
