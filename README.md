@@ -11,6 +11,12 @@ It also allows deployment for different stages e.g. {developer}, dev, qa, prod.
 
 Currently script allows to deploy one glue job at a time. With tweak, it can also be used in Jenkins CI/CD to deploy all glue jobs.
 
+## Requirements
+* Any shell tool e.g. Cygwin or Gitbash
+* aws cli
+* zip command line tool
+* S3 bucket to store zip files
+
 ## How-to Use Script
 
 ### Folder Structure 
@@ -75,6 +81,7 @@ glue_role_arn='<specify Glue Role ARN>'
 ```
 
 > Always run script from project root folder instead of from *deploy* folder.
+> If Glue job is already deployed through Cloudformation and you wish to only sync Glue source code with S3 bucket, omit -cf. It will sync S3 but will not attempt to update CF.
 
 ### Example
 
