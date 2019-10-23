@@ -32,19 +32,25 @@ glue_role_arn='<specify Glue Role ARN>'
 
 ### Run Deploy Script
 ```shell
-# deploy <glue_job> cf <cf_folder>
+deploy <glue_job> -stage <stage> -cf <cf_folder>
+
 ## Arguments
-### glue_job  mandatory
-###     glue job name if selective glue job should be deployed
-### -stage  mandatory
-###     To define stage
-### stage required with -stage
-###     It will be used to pass stage environment parameters.
-###     It can be {developer name}, dev, qa or prod.
-###     {developer name} is useful in case of multiple developers are working on same job in same region.
-### cf  optional
-###     if specified, glue job will deployed through CF else only files will be uploaded to s3.
-### cf_folder required with -cf otherwise optional
-###     if specified, it will be taken as path for cf template. e.g. cf/ingeston/lambda/a_lambda.json
-###         should set cf_folder to 'ingestion/lambda'
+
+### glue_job    mandatory
+###             glue job name if selective glue job should be deployed
+
+### -stage      mandatory
+###             To define stage
+
+### stage       mandatory with -stage
+###             It will be used to pass stage environment parameters.
+###             It can be {developer name}, dev, qa or prod.
+###             {developer name} is useful in case of multiple developers are working on same job in same region.
+
+### cf          optional
+###             if specified, glue job will deployed through CF else only files will be uploaded to s3.
+
+### cf_folder   mandatory with -cf otherwise optional
+###             if specified, it will be taken as path for cf template (excluding *cf* folder). e.g. cf/ingeston/etl/bp_sample_job.json
+###             should set cf_folder to 'ingestion/etl'
 ```
