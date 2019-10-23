@@ -3,7 +3,7 @@ Boilerplate for deploying glue jobs through shell script.
 
 For developers, it will be useful as script can :
 * Install external libraries
-* Zip extra py files and externa libraries
+* Zip extra py files and external libraries
 * Upload main .py and zip files to s3 bucket
 * Deploy glue job through loudformation
 
@@ -17,7 +17,7 @@ Currently script allows to deploy one glue job at a time. With tweak, it can als
 
 
 ### ENV Configuration
-Add ENV configuration in utility/src/config/env.py file for different stages
+Add ENV configuration in **utility/src/config/env.py** file for different stages
 
 **Example of ENV Configuration**:
 
@@ -30,6 +30,7 @@ Add ENV configuration in utility/src/config/env.py file for different stages
 ```
 
 ### Deploy Script Configuration
+Modify following configuration in deploy/deploy_glue.sh
 
 ```python
 # Specify bucket in which you wish to upload zip and .py files
@@ -49,7 +50,7 @@ glue_role_arn='<specify Glue Role ARN>'
 ```shell
 ## Usage
 
-### deploy <glue_job> -stage <stage> -cf <cf_folder>
+### ./deploy/deploy_glue.sh <glue_job> -stage <stage> -cf <cf_folder>
 
 ## Arguments
 
@@ -73,15 +74,17 @@ glue_role_arn='<specify Glue Role ARN>'
 ###             should set cf_folder to 'ingestion/etl'
 ```
 
+> Always run script from project root folder instead of from *deploy* folder.
+
 ### Example
 
 ```shell
-deploy bp_sample -stage sandeep -cf ingestion/etl
+./deploy/deploy_glue.sh bp_sample -stage sandeep -cf ingestion/etl
 ```
 
-1. It will deploy *bp_sample_glue.py* glue job along with its depedencies using *sandeep* stage environment and *bp_sample_job.json* kept at *cf/ingestion/etl* location. 
-2. In S3, files will be stored at *<build_bucket>/sandeep* location.
-3. In Cloudformation, *bp-sample-sandeep* stack will be deployed
-4. Glue job *bp-sample-sandeep* will be created.
+1. It will deploy **bp_sample_glue.py** glue job along with its depedencies using **sandeep** stage environment and **bp_sample_job.json** kept at **cf/ingestion/etl** location. 
+2. In S3, files will be stored at **<build_bucket>/sandeep** location.
+3. In Cloudformation, **bp-sample-sandeep** stack will be deployed
+4. Glue job **bp-sample-sandeep** will be created.
 
 **Bonus**: You may also use clean.sh to clean temp files created during build. It may be useful during pushing code to git or distributing/sharing to others.
